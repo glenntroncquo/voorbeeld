@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://house-of-brazilian-treatments.optios.net/?fbclid=PAAaY9DlfulBc7qX6V7EYAWKp-OlKaUjJ1E6j5_HS_gC7sn_qmNawuXfJLJgE",
+      "permanent": true
+    },
+    {
+      "source": "/(.*)",
+      "destination": "https://house-of-brazilian-treatments.optios.net/?fbclid=PAAaY9DlfulBc7qX6V7EYAWKp-OlKaUjJ1E6j5_HS_gC7sn_qmNawuXfJLJgE",
+      "permanent": true
+    }
+  ]
+}

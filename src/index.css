@@ -1,0 +1,104 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 340 100% 99.5%;
+    --foreground: 336 10% 27%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 336 10% 27%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 336 10% 27%;
+
+    --primary: 330 100% 70%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 324 100% 95%;
+    --secondary-foreground: 336 15% 25%;
+
+    --muted: 324 50% 95%;
+    --muted-foreground: 336 5% 45%;
+
+    --accent: 260 100% 92%;
+    --accent-foreground: 265 15% 30%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 340 30% 92%;
+    --input: 340 30% 92%;
+    --ring: 330 100% 70%;
+
+    --radius: 0.875rem;
+  }
+
+  * {
+    @apply border-border scroll-smooth;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-salon-off-white text-salon-text-dark antialiased;
+    font-family: "Inter", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display;
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24;
+  }
+
+  .highlight-link {
+    @apply relative inline-block overflow-hidden;
+  }
+
+  .highlight-link::after {
+    @apply content-[''] absolute bottom-0 left-0 w-0 h-[2px] bg-salon-pink transition-all duration-300 ease-bounce-soft;
+  }
+
+  .highlight-link:hover::after {
+    @apply w-full;
+  }
+
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-sm border border-white/50 rounded-2xl shadow-soft;
+  }
+
+  .glass-card-hover {
+    @apply glass-card transition-all duration-300 hover:shadow-soft-lg hover:bg-white/70 hover:scale-[1.02] ease-bounce-soft;
+  }
+
+  .btn-primary {
+    @apply bg-salon-pink text-white rounded-full px-8 py-3 font-medium shadow-soft transition-all duration-300 hover:shadow-glow-pink hover:bg-opacity-90 ease-bounce-soft flex items-center justify-center gap-2;
+  }
+
+  .btn-secondary {
+    @apply bg-salon-lavender text-salon-text-dark rounded-full px-8 py-3 font-medium shadow-soft transition-all duration-300 hover:shadow-soft-lg hover:bg-opacity-90 ease-bounce-soft flex items-center justify-center gap-2;
+  }
+
+  .btn-outline {
+    @apply border-2 border-salon-pink text-salon-pink rounded-full px-8 py-3 font-medium transition-all duration-300 hover:bg-salon-softer-pink hover:shadow-soft ease-bounce-soft flex items-center justify-center gap-2;
+  }
+
+  /* Remove animation classes and replace with static styling */
+  .animate-on-scroll {
+    @apply opacity-100;
+  }
+}
