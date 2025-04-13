@@ -96,9 +96,4 @@
   .btn-outline {
     @apply border-2 border-salon-pink text-salon-pink rounded-full px-8 py-3 font-medium transition-all duration-300 hover:bg-salon-softer-pink hover:shadow-soft ease-bounce-soft flex items-center justify-center gap-2;
   }
-
-  /* Remove animation classes and replace with static styling */
-  .animate-on-scroll {
-    @apply opacity-100;
-  }
 }

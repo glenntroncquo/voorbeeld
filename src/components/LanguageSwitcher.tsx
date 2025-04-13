@@ -1,8 +1,11 @@
-import { useLanguage, Language } from "../context/LanguageContext";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+
+type Language = "nl" | "en" | "fr";
 
 const LanguageSwitcher = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
 
   const languages: { code: Language; name: string; flag: string }[] = [
@@ -11,14 +14,16 @@ const LanguageSwitcher = () => {
     { code: "fr", name: "Français", flag: "🇫🇷" },
   ];
 
-  const currentLanguage = languages.find((lang) => lang.code === language);
+  const currentLanguage = languages.find(
+    (lang) => lang.code === (i18n.language as Language)
+  );
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const handleLanguageChange = (lang: Language) => {
-    setLanguage(lang);
+    i18n.changeLanguage(lang);
     setIsOpen(false);
   };
 
@@ -42,7 +47,7 @@ const LanguageSwitcher = () => {
                 <button
                   onClick={() => handleLanguageChange(lang.code)}
                   className={`w-full text-left px-4 py-2 hover:bg-salon-softer-pink flex items-center gap-2 ${
-                    language === lang.code
+                    i18n.language === lang.code
                       ? "bg-salon-softer-pink text-salon-pink"
                       : "text-salon-text-dark"
                   }`}

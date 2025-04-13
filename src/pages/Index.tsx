@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ChevronRight,
@@ -14,14 +14,55 @@ import Hero from "../components/Hero";
 import ServiceCard from "../components/ServiceCard";
 import TestimonialCard from "../components/TestimonialCard";
 import AppointmentForm from "../components/AppointmentForm";
-import { useLanguage } from "../context/LanguageContext";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
+import QuestionForm from "@/components/QuestionForm";
+import { supabase } from "@/integrations/supabase";
 
 const Index = () => {
-  const { t } = useLanguage();
+  const { t } = useTranslation();
+  const [reviews, setReviews] = useState([]);
+  const [rating, setRating] = useState(0);
+  const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
-    // Scroll to top on page load
-    window.scrollTo(0, 0);
+    const fetchPlaceDetails = async () => {
+      //@ts-expect-error Google Maps API not fully typed
+      const service = new window.google.maps.places.PlacesService(
+        document.createElement("div")
+      );
+
+      const placeId = "ChIJffzADP9zw0cR4XNd-OH_20k";
+      const detailsRequest = {
+        placeId: placeId,
+        fields: [
+          "name",
+          "formatted_address",
+          "rating",
+          "reviews",
+          "user_ratings_total",
+        ],
+        language: i18n.language, // Dynamically set the language based on i18n
+      };
+
+      service.getDetails(detailsRequest, (placeDetails, status) => {
+        //@ts-expect-error Google Maps API not fully typed
+        if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+          console.log("Place Details with Reviews:", placeDetails);
+          setReviews(placeDetails.reviews || []);
+          setRating((placeDetails.rating || 0).toFixed(1));
+          setReviewCount(
+            placeDetails.user_ratings_total
+              ? placeDetails.user_ratings_total
+              : 0
+          );
+        } else {
+          console.error("Details fetch failed:", status);
+        }
+      });
+    };
+
+    fetchPlaceDetails();
   }, []);
 
   return (
@@ -29,7 +70,7 @@ const Index = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <Hero />
+      <Hero rating={Number(rating).toFixed(1)} reviewCount={reviewCount} />
 
       {/* About Section */}
       <section className="relative">
@@ -65,7 +106,7 @@ const Index = () => {
                     </span>
                   </div>
                   <p className="text-salon-text-medium text-sm mt-1">
-                    From 500+ Reviews
+                    {t("fromReviews", { count: reviewCount })}
                   </p>
                 </div>
               </div>
@@ -77,15 +118,12 @@ const Index = () => {
               </div>
 
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-6 leading-tight animate-on-scroll">
-                Ons verhaal{" "}
-                <span className="text-salon-pink">With Passion</span>
+                {t("ourRoots")}{" "}
+                <span className="text-salon-pink">{t("ourStory")}</span>
               </h2>
 
               <p className="text-salon-text-medium mb-6 animate-on-scroll">
-                At LuxeTress, we believe that great hair tells a story. Our
-                journey began with a simple vision: to create a sanctuary where
-                artistry meets luxury, where every client leaves feeling not
-                just beautiful, but truly seen and celebrated.
+                {t("ourStoryDesc")}
               </p>
 
               <p className="text-salon-text-medium mb-8 animate-on-scroll">
@@ -149,20 +187,16 @@ const Index = () => {
         <div className="section-container relative z-10">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-1 rounded-full bg-white text-salon-pink text-sm font-medium mb-4 animate-on-scroll">
-              Our Premium Services
+              {t("ourPremiumServices")}
             </div>
 
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6 animate-on-scroll">
-              <span className="text-salon-text-dark">
-                Elevate Your Look With
-              </span>{" "}
-              <span className="text-salon-pink">Our Expertise</span>
+              <span className="text-salon-text-dark">{t("yourLook")}</span>{" "}
+              <span className="text-salon-pink">{t("ourPassion")}</span>
             </h2>
 
             <p className="text-salon-text-medium max-w-2xl mx-auto animate-on-scroll">
-              From precision cuts to transformative colors, our services are
-              designed to enhance your natural beauty and express your unique
-              personality.
+              {t("ourServicesDesc")}
             </p>
           </div>
 
@@ -284,47 +318,33 @@ const Index = () => {
         <div className="section-container relative z-10">
           <div className="text-center mb-16">
             <div className="inline-block px-4 py-1 rounded-full bg-salon-light-pink text-salon-pink text-sm font-medium mb-4 animate-on-scroll">
-              Client Testimonials
+              {t("clientTestimonials")}
             </div>
 
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6 animate-on-scroll">
-              <span className="text-salon-text-dark">What Our</span>{" "}
-              <span className="text-salon-pink">Clients Say</span>
+              <span className="text-salon-text-dark">
+                {t("whatOurClients")}
+              </span>{" "}
+              <span className="text-salon-pink">{t("clientsSay")}</span>
             </h2>
 
             <p className="text-salon-text-medium max-w-2xl mx-auto animate-on-scroll">
-              Don't just take our word for it. Hear what our clients have to say
-              about their experiences at LuxeTress.
+              {t("clientExperiences")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <TestimonialCard
-              name="Emily Johnson"
-              role="Regular Client"
-              text="The stylists here truly understand what I want even when I can't fully articulate it. My hair has never looked better!"
-              rating={5}
-              imageSrc="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
-              delay={0}
-            />
-
-            <TestimonialCard
-              name="Michael Chang"
-              role="First-time Client"
-              text="I was nervous about trying a new salon, but my stylist made me feel comfortable and gave me the best haircut I've had in years."
-              rating={5}
-              imageSrc="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
-              delay={100}
-            />
-
-            <TestimonialCard
-              name="Sarah Williams"
-              role="Regular Client"
-              text="The balayage technique they used transformed my hair. I get compliments everywhere I go now!"
-              rating={5}
-              imageSrc="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=200&q=80"
-              delay={200}
-            />
+            {reviews.slice(0, 3).map((review, index) => (
+              <TestimonialCard
+                key={index}
+                name={review.author_name}
+                role={t("client")}
+                text={review.text}
+                rating={review.rating}
+                imageSrc={review.profile_photo_url || "default-image-url"}
+                delay={index * 100}
+              />
+            ))}
           </div>
 
           <div className="text-center mt-12">
@@ -332,13 +352,13 @@ const Index = () => {
               to="/about#testimonials"
               className="btn-primary inline-flex animate-on-scroll"
             >
-              View More Testimonials <ChevronRight size={18} />
+              {t("viewMoreTestimonials")} <ChevronRight size={18} />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* Booking Section */}
+      {/* Question Section */}
       <section className="bg-salon-softer-pink py-20 relative">
         <div className="absolute top-0 right-1/4 w-64 h-64 bg-salon-light-pink rounded-full filter blur-3xl opacity-30 z-0"></div>
         <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-salon-lavender rounded-full filter blur-3xl opacity-30 z-0"></div>
@@ -347,18 +367,18 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="inline-block px-4 py-1 rounded-full bg-white text-salon-pink text-sm font-medium mb-4 animate-on-scroll">
-                Schedule Your Visit
+                {t("scheduleYourVisit")}
               </div>
 
               <h2 className="text-3xl md:text-4xl font-display font-bold mb-6 leading-tight animate-on-scroll">
-                <span className="text-salon-text-dark">Ready to </span>
-                <span className="text-salon-pink">Transform Your Look?</span>
+                <span className="text-salon-text-dark">{t("readyTo")} </span>
+                <span className="text-salon-pink">
+                  {t("transformYourLook")}
+                </span>
               </h2>
 
               <p className="text-salon-text-medium mb-8 animate-on-scroll">
-                Book your appointment today and take the first step towards the
-                hair of your dreams. Our friendly team is waiting to welcome you
-                to the LuxeTress experience.
+                {t("bookingDesc")}
               </p>
 
               <div className="glass-card p-6 mb-8 animate-on-scroll">
@@ -454,7 +474,7 @@ const Index = () => {
               </div>
             </div>
 
-            <AppointmentForm />
+            <QuestionForm />
           </div>
         </div>
       </section>

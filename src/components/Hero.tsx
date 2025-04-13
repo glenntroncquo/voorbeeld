@@ -1,11 +1,16 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Heart, Star } from "lucide-react";
-import { useLanguage } from "../context/LanguageContext";
+import { useTranslation } from "react-i18next";
 
-const Hero = () => {
+interface HeroProps {
+  rating: string;
+  reviewCount: number;
+}
+
+const Hero = ({ rating, reviewCount }: HeroProps) => {
   const heroRef = useRef<HTMLDivElement>(null);
-  const { t } = useLanguage();
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (heroRef.current) {
@@ -59,7 +64,7 @@ const Hero = () => {
                 ))}
               </div>
               <span className="ml-2 text-sm font-medium text-salon-text-dark">
-                {t("ourRating")}
+                {t("ourRating", { rating, count: reviewCount })}
               </span>
             </div>
           </div>
@@ -82,8 +87,6 @@ const Hero = () => {
               {t("exploreServices")}
             </Link>
           </div>
-
-         
         </div>
 
         <div className="md:w-1/2 relative">
